@@ -1,0 +1,26 @@
+# Unique name for this workflow
+name: My CI/CD pipeline
+
+# Definition when the workflow should run
+on:
+    pull_request:
+        types: [opened, edited, synchronize, reopened]
+
+# Jobs to be executed
+jobs:
+    # Verify source using PMD
+    pmd-verification:
+        runs-on: ubuntu-latest
+        steps:
+
+            # Install PMD
+            - name: Install PMD
+              run: wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.22.0/pmd-bin-6.22.0.zip && unzip pmd-bin-6.22.0.zip
+
+            # Checkout the code in the pull request
+            - name: 'Checkout source code'
+              uses: actions/checkout@v2
+
+            # Execute PMD
+            - name: Execute PMD
+              run: pmd-bin-6.22.0/bin/run.sh pmd -minimumpriority 2 -d force-app -R apex-ruleset-custom.xml -f text -l apex
