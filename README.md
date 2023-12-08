@@ -1,4 +1,4 @@
-It's time for some changes   
+It's time for some changes    
 
 # Salto CI/CD Course: SFDX Project Template
 
