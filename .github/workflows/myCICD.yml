@@ -28,6 +28,9 @@ jobs:
     pmd-verification:
         runs-on: ubuntu-latest
         steps:
+            # Checkout the code in the pull request
+            - name: 'Checkout source code'
+              uses: actions/checkout@v3
 
             # Install PMD
             - name: Install PMD
@@ -41,10 +44,6 @@ jobs:
               run: |
                 ls -R $GITHUB_WORKSPACE
                 echo "PMD_INSTALL_PATH: $PMD_INSTALL_PATH"
-        
-            # Checkout the code in the pull request
-            - name: 'Checkout source code'
-              uses: actions/checkout@v3
 
             # Execute PMD
             - name: Execute PMD
