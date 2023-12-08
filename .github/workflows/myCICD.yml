@@ -47,7 +47,8 @@ jobs:
 
             # Echo PMD
             - name: Echo PMD
-              run: echo "This is the path: $PMD_INSTALL_PATH/bin/run.sh"
+              run: |
+                echo "This is the path: $PMD_INSTALL_PATH/bin/run.sh"
 
             # Execute PMD
             - name: Execute PMD
