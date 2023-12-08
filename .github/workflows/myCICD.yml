@@ -28,9 +28,16 @@ jobs:
     pmd-verification:
         runs-on: ubuntu-latest
         steps:
+
             # Install PMD
             - name: Install PMD
-              run: wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.51.0/pmd-bin-6.51.0.zip && unzip pmd-bin-6.51.0.zip
+              run: |
+                wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.51.0/pmd-bin-6.51.0.zip
+                unzip pmd-bin-6.51.0.zip
+
+            # Install PMD
+            #- name: Install PMD
+            #  run: wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.51.0/pmd-bin-6.51.0.zip && unzip pmd-bin-6.51.0.zip
 
             # Checkout the code in the pull request
             - name: 'Checkout source code'
@@ -38,5 +45,7 @@ jobs:
 
             # Execute PMD
             - name: Execute PMD
-              run: pmd-bin-6.51.0/bin/run.sh pmd --minimum-priority 2 -R custom-apex-rules.xml -d force-app -f text -l apex
-
+              #run: pmd-bin-6.51.0/bin/run.sh pmd --minimum-priority 2 -R custom-apex-rules.xml -d force-app -f text -l apex
+              run: |
+                  pmd-bin/bin/run.sh pmd --minimum-priority 2 --fail-on-violation true -d force-app/main/default -R apex-ruleset.xml -f text -l apex
+                  pmd-bin/bin/run.sh pmd --minimum-priority 2 --fail-on-violation true -d force-app/main/selectors -R apex-ruleset.xml -f text -l apex
