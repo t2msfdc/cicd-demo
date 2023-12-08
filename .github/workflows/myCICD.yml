@@ -38,7 +38,7 @@ jobs:
             
             - name: Set Installation Path
               run: |
-                echo "PMD_INSTALL_PATH=${GITHUB_WORKSPACE}/pmd-bin" >> $GITHUB_ENV
+                echo "PMD_INSTALL_PATH=${GITHUB_WORKSPACE}/pmd-bin-6.51.0" >> $GITHUB_ENV
         
             - name: Debug
               run: |
