@@ -45,6 +45,10 @@ jobs:
                 ls -R $GITHUB_WORKSPACE
                 echo "PMD_INSTALL_PATH: $PMD_INSTALL_PATH"
 
+            # Echo PMD
+            - name: Echo PMD
+              run: echo "This is the path: $PMD_INSTALL_PATH/bin/run.sh"
+
             # Execute PMD
             - name: Execute PMD
               run:  $PMD_INSTALL_PATH/bin/run.sh pmd --minimum-priority 2 -R custom-apex-rules.xml -d force-app -f text -l apex
