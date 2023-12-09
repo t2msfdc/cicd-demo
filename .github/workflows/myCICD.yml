@@ -5,6 +5,8 @@ name: My CI/CD pipeline
 on:
     pull_request:
         types: [opened, edited, synchronize, reopened]
+        paths:
+          - force-app/**
 
 # Jobs to be executed
 jobs:
@@ -24,13 +26,22 @@ jobs:
               ls ${{ github.workspace }}
           - run: echo "🍏 This job's status is ${{ job.status }}."
 
-    # Try to iniate something
+    # Scan files
     pmd:    
         runs-on: ubuntu-latest
         steps:
-          - uses: sfdx-actions/setup-pmd@v1
-          - name: run-pmd
-            run: pmd -d ./force-app/main/default/classes -R category/apex/design.xml -f text
+          - name: 'Checkout source code'
+            uses: actions/checkout@v3
+        
+          - name: Install SFDX CLI and Scanner
+            run: |
+                npm install --global sfdx-cli
+                sfdx --version
+                sfdx plugins install @salesforce/sfdx-scanner
+      
+          - name: Apex static analysis
+            run: |
+              sfdx scanner run --target "force-app" -f junit
            
     # Verify source using PMD
     # pmd-verification:
