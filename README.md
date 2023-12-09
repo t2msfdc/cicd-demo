@@ -7,7 +7,7 @@ This repo contains the sample sfdx project and metadata that we recommend using 
 ## Installing the source code in trailhead playground orgs
 
 It is **highly** recommended that you install this project and follow the course using 4 trailhead playground orgs, which will represent the 4 environments in a typical CI/CD pipeline:
-
+ 
 - Your dev sandbox
 - Integration sandbox
 - UAT sandbox
