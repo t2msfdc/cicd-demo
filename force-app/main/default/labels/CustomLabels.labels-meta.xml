@@ -4,7 +4,7 @@
         <fullName>Github_username</fullName>
         <language>en_US</language>
         <protected>true</protected>
-        <shortDescription>Github username hotfix in prod - Commit from US0 - Test pipeline</shortDescription>
+        <shortDescription>Github username hotfix in prod - Commit from US0 - Test pipeline...</shortDescription>
         <value>trailheadapps</value>
     </labels>
 </CustomLabels>
