@@ -42,7 +42,7 @@ jobs:
       
           - name: Apex static analysis
             run: |
-              sfdx scanner run --target "force-app" -f junit
+              sfdx scanner run --target "force-app" -f junit --severity-threshold 1
            
     # Verify source using PMD
     # pmd-verification:
