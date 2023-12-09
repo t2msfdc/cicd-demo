@@ -1,3 +1,5 @@
+It's time for some changes 
+
 # Salto CI/CD Course: SFDX Project Template
 
 This repo contains the sample sfdx project and metadata that we recommend using when following [Salto's CICD Course](www.salto.io).
