@@ -3,9 +3,11 @@ name: My CI/CD pipeline
 
 # Definition when the workflow should run
 on:
-    push:
-        paths:
-          - force-app/**
+    pull_request:
+        types: [opened, edited, synchronize, reopened]
+    #push:
+     #   paths:
+      #    - force-app/**
 
 # Jobs to be executed
 jobs:
