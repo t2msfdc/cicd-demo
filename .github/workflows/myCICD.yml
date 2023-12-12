@@ -49,13 +49,13 @@ jobs:
     # Check only deploy
     Scanner:  
         runs-on: ubuntu-latest
-            steps:
-              # Authenticate to target org
-              - name: "Authenticate to Org"
-                run: |
-                  echo ${{ secrets.SFDX_INTEGRATION_AUTH_URL }} > ./SFDX_URL.txt
-                  sfdx force:auth:sfdxurl:store -f ./SFDX_URL.txt --setdefaultusername
-          
+        steps:
+          # Authenticate to target org
+          - name: "Authenticate to Org"
+            run: |
+              echo ${{ secrets.SFDX_INTEGRATION_AUTH_URL }} > ./SFDX_URL.txt
+              sfdx force:auth:sfdxurl:store -f ./SFDX_URL.txt --setdefaultusername
+      
     # Verify source using PMD
     # pmd-verification:
      #    runs-on: ubuntu-latest
