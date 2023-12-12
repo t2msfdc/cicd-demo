@@ -47,7 +47,8 @@ jobs:
             #--severity-threshold 1
            
     # Check only deploy
-    Check_Only_Deploy:  
+    Check_Only_Deploy:
+        needs: Scanner 
         runs-on: ubuntu-latest
         steps:
           # Authenticate to target org
