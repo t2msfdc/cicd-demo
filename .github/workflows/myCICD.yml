@@ -47,10 +47,29 @@ jobs:
             #--severity-threshold 1
            
     # Check only deploy
-    Check_Only_Deploy:
-        needs: Scanner 
+    Check_Only_Deploy: 
         runs-on: ubuntu-latest
         steps:
+          # Install Salesforce CLI
+          - name: Install Salesforce CLI
+            run: |
+              npm install sfdx-cli --global
+              sfdx --version
+          # SFDX-Git-Delta
+          - name: Install plugins
+            run: |
+              echo y | sfdx plugins:install sfdx-git-delta
+              sfdx plugins
+          # Install utilities
+          - name: Install utilities
+            run: |
+              pip install yq
+              xq --version
+          # Checkout the code in the pull request
+          - name: Checkout
+            uses: actions/checkout@v3
+            with:
+              fetch-depth: 0
           # Authenticate to target org
           - name: "Authenticate to Org"
             run: |
