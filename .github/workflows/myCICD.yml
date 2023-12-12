@@ -75,7 +75,27 @@ jobs:
             run: |
               echo ${{ secrets.SFDX_INTEGRATION_AUTH_URL }} > ./SFDX_URL.txt
               sfdx force:auth:sfdxurl:store -f ./SFDX_URL.txt --setdefaultusername
-      
+          # Check-only deploy
+          - name: "Check-only delta deploy"
+            run: |
+              sfdx sgd:source:delta --to "HEAD" --from "origin/main" --output "." -i .forceignore
+              echo "--- package.xml generated with added and modified metadata ---"
+              cat package/package.xml
+              echo
+              echo "--- destructiveChanges.xml generated with deleted metadata ---"
+              cat destructiveChanges/destructiveChanges.xml
+              echo
+              echo "--- Apex Tests to be executed ---"
+              export APEX_CLASSES=$(xq . < package/package.xml | jq '.Package.types | [.] | flatten | map(select(.name=="ApexClass")) | .[] | .members | [.] | flatten | map(select(. | index("*") | not)) | unique | join(",")' -r)
+              echo $APEX_CLASSES
+              echo
+              echo "--- Delta Check-Only Deploy ---"
+              if [ -z "$APEX_CLASSES" ]; then
+                sfdx force:source:deploy -x package/package.xml --postdestructivechanges destructiveChanges/destructiveChanges.xml -w 30 --checkonly
+              else
+                sfdx force:source:deploy -x package/package.xml --postdestructivechanges destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -r "$APEX_CLASSES" --checkonly
+              fi
+
     # Verify source using PMD
     # pmd-verification:
      #    runs-on: ubuntu-latest
