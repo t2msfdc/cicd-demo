@@ -26,10 +26,10 @@ public with sharing class ApexClassUtilities {
         try {
             groupName = matcher.group(1);
         } catch (StringException matcherException) {
-            System.debug(
+            /*System.debug(
                 LoggingLevel.INFO,
                 'Failed to extract group name. Class name: ' + klass.Name
-            );
+            );*/
         }
 
         return groupName;
