@@ -28,7 +28,7 @@ public with sharing class ApexClassUtilities {
         } catch (StringException matcherException) {
             System.debug(
                 LoggingLevel.INFO,
-                'Failed to extract group name. Class name: ' + klass.Name
+                'Failed to extract group name. Class name: ' + klass.Name 
             );
         }
 
