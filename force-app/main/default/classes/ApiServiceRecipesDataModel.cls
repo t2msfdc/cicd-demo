@@ -22,7 +22,7 @@ public with sharing class ApiServiceRecipesDataModel {
      * @description example of how to model a nested json object
      */
     public class ExampleObject {
-        public String a;
+        public String a; 
         public String c;
     }
 
