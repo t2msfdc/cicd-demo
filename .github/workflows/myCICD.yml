@@ -90,11 +90,13 @@ jobs:
               echo $APEX_CLASSES
               echo
               echo "--- Delta Check-Only Deploy ---"
-              if [ -z "$APEX_CLASSES" ]; then
-                sfdx force:source:deploy -x package/package.xml --postdestructivechanges destructiveChanges/destructiveChanges.xml -w 30 --checkonly
-              else
-                sfdx force:source:deploy -x package/package.xml --postdestructivechanges destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -r "$APEX_CLASSES" --checkonly
-              fi
+              sfdx force:source:deploy -x package/package.xml --postdestructivechanges destructiveChanges/destructiveChanges.xml -w 30 --checkonly
+
+      #if [ -z "$APEX_CLASSES" ]; then
+        #sfdx force:source:deploy -x package/package.xml --postdestructivechanges destructiveChanges/destructiveChanges.xml -w 30 --checkonly
+      #else
+        #sfdx force:source:deploy -x package/package.xml --postdestructivechanges destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -r "$APEX_CLASSES" --checkonly
+      #fi
 
     # Verify source using PMD
     # pmd-verification:
