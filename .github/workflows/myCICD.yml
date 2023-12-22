@@ -77,7 +77,7 @@ jobs:
       # Check-only deploy
       - name: "Check-only delta deploy"
         run: |
-          sf sgd:source:delta --to "HEAD" --from "origin/development" --output "." -i .forceignore
+          sf sgd:source:delta --to "HEAD" --from "origin/develop" --output "." -i .forceignore
           echo "--- package.xml generated with added and modified metadata ---"
           cat package/package.xml
           echo
