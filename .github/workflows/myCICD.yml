@@ -85,7 +85,7 @@ jobs:
           cat destructiveChanges/destructiveChanges.xml
           echo
           echo "--- Apex Tests to be executed ---"
-          export APEX_CLASSES=$(xq . < package/package.xml | jq '.Package.types | [.] | flatten | map(select(.name=="ApexClass")) | .[] | .members | [.] | flatten | map(select(. | index("*") | not)) | unique | join(",")' -r)
+          export APEX_CLASSES=$(xq . < package/package.xml | jq '.Package.types | [.] | flatten | map(select(.name=="ApexClass")) | .[] | .members | [.] | flatten | map(select(. | index("*") | not)) | unique | join(" ")' -r)
           echo $APEX_CLASSES
           echo
           echo "--- Delta Check-Only Deploy ---"
