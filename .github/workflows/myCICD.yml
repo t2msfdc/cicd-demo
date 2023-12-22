@@ -89,10 +89,8 @@ jobs:
           echo $APEX_CLASSES
           echo
           echo "--- Delta Check-Only Deploy ---"
-          sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 --verbose
-
-      # if [ -z "$APEX_CLASSES" ]; then
-      #    sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 --verbose
-      #  else
-      #    sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -t "$APEX_CLASSES" --verbose
-      #  fi
+          if [ -z "$APEX_CLASSES" ]; then
+            sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 --verbose
+          else
+            sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -t "$APEX_CLASSES" --verbose
+          fi
