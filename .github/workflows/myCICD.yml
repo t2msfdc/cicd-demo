@@ -85,12 +85,12 @@ jobs:
           cat destructiveChanges/destructiveChanges.xml
           echo
           echo "--- Apex Tests to be executed ---"
-          export APEX_CLASSES=$(xq . < package/package.xml | jq '.Package.types | [.] | flatten | map(select(.name=="ApexClass")) | .[] | .members | [.] | flatten | map(select(. | index("*") | not)) | unique | join(" ")' -r)
+          export APEX_CLASSES=$(xq . < package/package.xml | jq '.Package.types | [.] | flatten | map(select(.name=="ApexClass")) | .[] | .members | [.] | flatten | map(select(. | index("*") | not)) | unique | join("  ")' -r)
           echo $APEX_CLASSES
           echo
           echo "--- Delta Check-Only Deploy ---"
           if [ -z "$APEX_CLASSES" ]; then
-            sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 --verbose
+            sf project deploy start -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 --dry-run --verbose
           else
-            sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -t "$APEX_CLASSES" --verbose
+            sf project deploy start -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -t "$APEX_CLASSES" --dry-run --verbose
           fi
