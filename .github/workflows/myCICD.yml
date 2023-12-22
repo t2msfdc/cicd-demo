@@ -88,9 +88,11 @@ jobs:
           export APEX_CLASSES=$(xq . < package/package.xml | jq '.Package.types | [.] | flatten | map(select(.name=="ApexClass")) | .[] | .members | [.] | flatten | map(select(. | index("*") | not)) | unique | join(",")' -r)
           echo $APEX_CLASSES
           echo
-          echo "--- Delta Check-Only Deploy ---"       
-          if [ -z "$APEX_CLASSES" ]; then
-            sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 --verbose
-          else
-            sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -t "$APEX_CLASSES" --verbose
-          fi
+          echo "--- Delta Check-Only Deploy ---"
+          sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 --verbose
+
+      # if [ -z "$APEX_CLASSES" ]; then
+      #    sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 --verbose
+      #  else
+      #    sf project deploy validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -t "$APEX_CLASSES" --verbose
+      #  fi
