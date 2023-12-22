@@ -9,7 +9,7 @@ private inherited sharing class AccountServiceLayer_Tests {
     System.Assert.areEqual(
       'Hello Stream Viewers',
       AccountServiceLayer.didExecuteMethod,
-      'Expected the log to match the input parameter.'
+      'Expected the log to match the input parameter..'
     );
   }
 
