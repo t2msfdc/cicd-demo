@@ -90,37 +90,7 @@ jobs:
           echo
           echo "--- Delta Check-Only Deploy ---"       
           if [ -z "$APEX_CLASSES" ]; then
-            sf project:deploy:start -x package/package.xml --postdestructivechanges destructiveChanges/destructiveChanges.xml -w 30 --checkonly
+            sf project:deploy:validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30
           else
-            sf project:deploy:start -x package/package.xml --postdestructivechanges destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -r "$APEX_CLASSES" --checkonly
+            sf project:deploy:validate -x package/package.xml --post-destructivec-hanges destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -r "$APEX_CLASSES" --checkonly
           fi
-
-  # Verify source using PMD
-  # pmd-verification:
-  #    runs-on: ubuntu-latest
-  #   steps:
-  #     # Checkout the code in the pull request
-  #   - name: 'Checkout source code'
-  #   uses: actions/checkout@v3
-  #
-  #          # Install PMD
-  #        - name: Install PMD
-  #         run: wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.51.0/pmd-bin-6.51.0.zip && unzip pmd-bin-6.51.0.zip
-
-  #     - name: Set Installation Path
-  #     run: |
-  #     echo "PMD_INSTALL_PATH=${GITHUB_WORKSPACE}/pmd-bin-6.51.0" >> $GITHUB_ENV
-
-  # - name: Debug
-  #  run: |
-  #   ls -R $GITHUB_WORKSPACE
-  #  echo "PMD_INSTALL_PATH: $PMD_INSTALL_PATH"
-
-  #    # Echo PMD
-  #   - name: Echo PMD
-  #    run: |
-  #     echo "This is the path: $PMD_INSTALL_PATH/bin/run.sh"
-
-  #  # Execute PMD
-  # - name: Execute PMD
-  #  run:  $PMD_INSTALL_PATH/bin/run.sh pmd --minimum-priority 2 -R custom-apex-rules.xml -d force-app -f text -l apex
