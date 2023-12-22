@@ -92,5 +92,5 @@ jobs:
           if [ -z "$APEX_CLASSES" ]; then
             sf project:deploy:validate -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30
           else
-            sf project:deploy:validate -x package/package.xml --post-destructivec-hanges destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -r "$APEX_CLASSES"
+            sf project:deploy:validate -x package/package.xml --post-destructivec-hanges destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -t "$APEX_CLASSES"
           fi
