@@ -3,73 +3,100 @@ name: My CI/CD pipeline
 
 # Definition when the workflow should run
 on:
-    push:
-        paths:
-          - force-app/**
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  #push:
+  #   paths:
+  #    - force-app/**
 
 # Jobs to be executed
 jobs:
-    # Try to iniate something
-    initialization:
-        runs-on: ubuntu-latest
-        steps:
-          - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-          - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-          - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-          - name: Check out repository code
-            uses: actions/checkout@v4
-          - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-          - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-          - name: List files in the repository
-            run: |
-              ls ${{ github.workspace }}
-          - run: echo "🍏 This job's status is ${{ job.status }}."
+  # Try to iniate something
+  initialization:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
 
-    # Scan files
-    pmd:    
-        runs-on: ubuntu-latest
-        steps:
-          - name: 'Checkout source code'
-            uses: actions/checkout@v3
-        
-          - name: Install SFDX CLI and Scanner
-            run: |
-                npm install --global sfdx-cli
-                sfdx --version
-                sfdx plugins install @salesforce/sfdx-scanner
-      
-          - name: Apex static analysis
-            run: |
-              sfdx scanner run --target "force-app" -f junit
-           
-    # Verify source using PMD
-    # pmd-verification:
-     #    runs-on: ubuntu-latest
-      #   steps:
-        #     # Checkout the code in the pull request
-          #   - name: 'Checkout source code'
-            #   uses: actions/checkout@v3
- #
-   #          # Install PMD
-     #        - name: Install PMD
-      #         run: wget https://github.com/pmd/pmd/releases/download/pmd_releases%2F6.51.0/pmd-bin-6.51.0.zip && unzip pmd-bin-6.51.0.zip
-            
-        #     - name: Set Installation Path
-          #     run: |
-            #     echo "PMD_INSTALL_PATH=${GITHUB_WORKSPACE}/pmd-bin-6.51.0" >> $GITHUB_ENV
-        
-            # - name: Debug
-             #  run: |
-              #   ls -R $GITHUB_WORKSPACE
-               #  echo "PMD_INSTALL_PATH: $PMD_INSTALL_PATH"
+  # Scan files
+  Scanner:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout source code"
+        uses: actions/checkout@v3
 
-         #    # Echo PMD
-          #   - name: Echo PMD
-           #    run: |
-            #     echo "This is the path: $PMD_INSTALL_PATH/bin/run.sh"
+      - name: Install SFDX CLI and Scanner
+        run: |
+          npm install --global @salesforce/cli
+          sf --version
+          sf plugins install @salesforce/sfdx-scanner
 
-           #  # Execute PMD
-            # - name: Execute PMD
-             #  run:  $PMD_INSTALL_PATH/bin/run.sh pmd --minimum-priority 2 -R custom-apex-rules.xml -d force-app -f text -l apex
-              
- 
+      - name: Run Apex static analysis
+        run: |
+          sf scanner run --target "force-app" -f junit
+        #--severity-threshold 1
+
+      - name: Archive Apex static analysis result
+        uses: actions/upload-artifact@v3
+        with:
+          name: Apex static analysis result
+          path: scanner/output.xml
+
+  # Check only deploy
+  Check_Only_Deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # Install Salesforce CLI
+      - name: Install Salesforce CLI
+        run: |
+          npm install @salesforce/cli --global
+          sf --version
+      # SFDX-Git-Delta
+      - name: Install plugins
+        run: |
+          echo y | sf plugins:install sfdx-git-delta
+          sf plugins
+      # Install utilities
+      - name: Install utilities
+        run: |
+          pip install yq
+          xq --version
+      # Checkout the code in the pull request
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      # Authenticate to target org
+      - name: "Authenticate to Org"
+        run: |
+          echo ${{ secrets.SFDX_INTEGRATION_AUTH_URL }} > ./SFDX_URL.txt
+          sf force:auth:sfdxurl:store -f ./SFDX_URL.txt --setdefaultusername
+      # Check-only deploy
+      - name: "Check-only delta deploy"
+        run: |
+          sfdx sgd:source:delta --to "HEAD" --from "origin/integration" --output "." -i .forceignore
+          echo "--- package.xml generated with added and modified metadata ---"
+          cat package/package.xml
+          echo
+          echo "--- destructiveChanges.xml generated with deleted metadata ---"
+          cat destructiveChanges/destructiveChanges.xml
+          echo
+          echo "--- Apex Tests to be executed ---"
+          export APEX_CLASSES=$(xq . < package/package.xml | jq '.Package.types | [.] | flatten | map(select(.name=="ApexClass")) | .[] | .members | [.] | flatten | map(select(. | index("*") | not)) | unique | join("  ")' -r)
+          echo $APEX_CLASSES
+          echo
+          echo "--- Delta Check-Only Deploy ---"
+          if [ -z "$APEX_CLASSES" ]; then
+            sf project deploy start -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 --dry-run --verbose
+          else
+            sf project deploy start -x package/package.xml --post-destructive-changes destructiveChanges/destructiveChanges.xml -w 30 -l RunSpecifiedTests -t "$APEX_CLASSES" --dry-run --verbose
+          fi
