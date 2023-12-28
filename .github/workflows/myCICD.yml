@@ -42,7 +42,7 @@ jobs:
 
       - name: Run Apex static analysis
         run: |
-          sf scanner run --target "force-app" -f junit --outfile scanner/output.xml
+          sf scanner run --target "force-app" -f junit
         #--severity-threshold 1
 
       - name: Archive Apex static analysis result
