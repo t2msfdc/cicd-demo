@@ -40,10 +40,16 @@ jobs:
           sf --version
           sf plugins install @salesforce/sfdx-scanner
 
-      - name: Apex static analysis
+      - name: Run Apex static analysis
         run: |
-          sf scanner run --target "force-app" -f junit --outfile output.xml
+          sf scanner run --target "force-app" -f junit --outfile scanner/output.xml
         #--severity-threshold 1
+
+      - name: Archive Apex static analysis result
+        uses: actions/upload-artifact@v3
+        with:
+          name: Apex static analysis result
+          path: scanner/output.xml
 
   # Check only deploy
   Check_Only_Deploy:
