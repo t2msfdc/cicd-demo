@@ -42,7 +42,7 @@ jobs:
 
       - name: Apex static analysis
         run: |
-          sf scanner run --target "force-app" -f junit
+          sf scanner run --target "force-app" -f junit --outfile output.xml
         #--severity-threshold 1
 
   # Check only deploy
